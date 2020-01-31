@@ -1,13 +1,16 @@
 IMAGE = huggingface-albert-api
 CACHE_VOLUME = albert-model-cache
 
-.PHONY : build cachevolume run run-repl run-sh
+.PHONY : build cachevolume run run-repl run-sh transformers
 
 cachevolume:
 	@docker volume create $(CACHE_VOLUME)
 
-tranformers:
-	@git submodule update checkout
+transformers:
+	if [ -z "$(ls -A transformers)" ]; \
+	then \
+		git submodule update --init transformers; \
+	fi
 
 build: transformers
 	@docker build -t $(IMAGE) .
