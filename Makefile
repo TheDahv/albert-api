@@ -15,6 +15,7 @@ build: transformers
 run: build
 	@docker run \
 		-v $(CACHE_VOLUME):/usr/src/cache \
+		-p 5000:5000 \
 		--rm \
 		-it $(IMAGE)
 
