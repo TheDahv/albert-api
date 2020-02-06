@@ -1,5 +1,5 @@
 #!/bin/bash
-HOST=localhost:5000
+HOST=${HOST:-localhost:5000}
 
 usage() {
   cat << EOF
