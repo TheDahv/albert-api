@@ -8,7 +8,7 @@ import torch
 def load_model():
     # Other models to try: albert-large-v2, albert-xlarge-v2
     # https://huggingface.co/transformers/pretrained_models.html
-    pretrained = 'albert-base-v2'
+    pretrained = 'albert-large-v2'
     tokenizer = AlbertTokenizer.from_pretrained(
         pretrained, do_lower_case=True)
     model = AlbertForQuestionAnswering.from_pretrained(
