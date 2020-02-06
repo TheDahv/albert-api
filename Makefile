@@ -17,21 +17,24 @@ build: transformers
 
 run: build
 	@docker run \
-		-v $(CACHE_VOLUME):/usr/src/cache \
+		-v "$(PWD)/src":/usr/app/src \
+		-v $(CACHE_VOLUME):/usr/cache \
 		-p 5000:5000 \
 		--rm \
 		-it $(IMAGE)
 
 run-repl: build
 	@docker run \
-		-v $(CACHE_VOLUME):/usr/src/cache \
+		-v "$(PWD)/src":/usr/app/src \
+		-v $(CACHE_VOLUME):/usr/cache \
 		--rm \
 		-it $(IMAGE) \
 		python
 
 run-sh: build
 	@docker run \
-		-v $(CACHE_VOLUME):/usr/src/cache \
+		-v "$(PWD)/src/":/usr/app/src \
+		-v $(CACHE_VOLUME):/usr/cache \
 		--rm \
 		-it $(IMAGE) \
 		bash

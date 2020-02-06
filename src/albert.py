@@ -12,7 +12,7 @@ def load_model():
     tokenizer = AlbertTokenizer.from_pretrained(
         pretrained, do_lower_case=True)
     model = AlbertForQuestionAnswering.from_pretrained(
-        pretrained, cache_dir="/usr/src/cache")
+        pretrained, cache_dir="/usr/cache")
     return model, tokenizer
 
 
