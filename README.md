@@ -32,7 +32,22 @@ Some helpful commands:
 - `make build`: builds the Docker image
 - `make transformers`: checks out the Huggingface transformers project
 
-## Usage
+## Demo App
+
+This project comes with a simple HTML UI to try out ALBERT. Open your Terminal
+application to the folder where you downloaded htis code and run `make run`.
+
+![Ask ALBERT UI Screenshot](./img/ask-albert.png)
+
+Wait for the `Running on http://0.0.0.0:5000/` message in your console and then
+open your browser to `http://0.0.0.0:5000`.
+
+Note, the first document you analyze may take time to download the required
+models.
+
+Press CTRL+C to quit.
+
+## Command-Line Usage
 
 This project comes with a script to run examples. First, make sure you have
 read and completed the steps in the Pre-Requisites section.

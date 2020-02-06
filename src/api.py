@@ -1,11 +1,16 @@
 import albert
 import hashlib
 import base64
-from flask import Flask, escape, request
+from flask import Flask, escape, request, render_template
 
 app = Flask(__name__)
 
 documents = {}
+
+
+@app.route("/")
+def serve_app():
+    return render_template('index.html')
 
 
 @app.route("/documents", methods=['POST'])
