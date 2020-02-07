@@ -9,6 +9,8 @@ const MODELS = {
   XXLARGE_V2: 'albert-xxlarge-v2',
 };
 
+const MAX_DOC_LENGTH = 1000;
+
 function app () {
   const { h, Component, render } = preact;
   const { useState } = preactHooks;
@@ -52,7 +54,7 @@ function app () {
       setFetchStatus(FETCH_STATES.DONE);
     };
 
-    const btnDisabled = !(document && question);
+    const btnDisabled = !(document && question) && document.length > MAX_DOC_LENGTH;
 
     return h(
       'div',
@@ -139,7 +141,11 @@ function app () {
               value: document,
               onInput: onDocumentChange,
             }),
-            h('label', { htmlFor: 'document' }, 'Content Text'),
+            h('label',
+              {
+                htmlFor: 'document',
+                className: document.length > MAX_DOC_LENGTH ? 'red-text' : '',
+              }, `Document Text (${document.length}/${MAX_DOC_LENGTH})`),
           ]),
           h('div', { className: 'row' }, [
             h('div', { className: 'input-field col s12 m3' }, [
