@@ -33,10 +33,13 @@ def answer(id):
     question = request.args.get("question")
     if not question:
         return "question parameter required"
+    model = request.args.get("model")
+    if not model:
+        model = 'albert-large-v2'
 
     document = documents[_id].decode('utf-8')
 
-    answer = albert.get_answer(document, question)
+    answer = albert.get_answer(model, document, question)
     if not answer:
         return "ALBERT was unable to answer the question"
     return answer

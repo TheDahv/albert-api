@@ -5,19 +5,18 @@ from transformers import AlbertTokenizer, AlbertForQuestionAnswering
 import torch
 
 
-def load_model():
+def load_model(pretrained_model):
     # Other models to try: albert-large-v2, albert-xlarge-v2
     # https://huggingface.co/transformers/pretrained_models.html
-    pretrained = 'albert-large-v2'
     tokenizer = AlbertTokenizer.from_pretrained(
-        pretrained, do_lower_case=True)
+        pretrained_model, do_lower_case=True)
     model = AlbertForQuestionAnswering.from_pretrained(
-        pretrained, cache_dir="/usr/cache")
+        pretrained_model, cache_dir="/usr/cache")
     return model, tokenizer
 
 
-def get_answer(context, question):
-    model, tokenizer = load_model()
+def get_answer(model, context, question):
+    model, tokenizer = load_model(model)
     input_dict = tokenizer.encode_plus(question, context, return_tensors='pt')
     start_scores, end_scores = model(**input_dict)
 

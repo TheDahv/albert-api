@@ -1,3 +1,14 @@
+const MODELS = {
+  BASE_V1: 'albert-base-v1',
+  LARGE_V1: 'albert-large-v1',
+  XLARGE_V1: 'albert-xlarge-v1',
+  XXLARGE_V1: 'albert-xxlarge-v1',
+  BASE_V2: 'albert-base-v2',
+  LARGE_V2: 'albert-large-v2',
+  XLARGE_V2: 'albert-xlarge-v2',
+  XXLARGE_V2: 'albert-xxlarge-v2',
+};
+
 function app () {
   const { h, Component, render } = preact;
   const { useState } = preactHooks;
@@ -12,10 +23,12 @@ function app () {
     const [ document, setDocument ] = useState('');
     const [ question, setQuestion ] = useState('');
     const [ answer, setAnswer ] = useState('');
+    const [ model, setModel ] = useState(MODELS.LARGE_V2);
     const [ fetchStatus, setFetchStatus ] = useState(FETCH_STATES.NOT_STARTED);
 
     const onDocumentChange = evt => setDocument(evt.target.value);
     const onQuestionChange = evt => setQuestion(evt.target.value);
+    const onModelChange = evt => setModel(evt.target.value);
 
     const answerQuestion = async () => {
       setFetchStatus(FETCH_STATES.IN_FLIGHT);
@@ -32,7 +45,8 @@ function app () {
       const id = await documentUpload.text();
 
       const answerResponse = await fetch(
-        `/documents/${id}/answer?question=${encodeURIComponent(question)}`,
+        `/documents/${id}/answer` +
+          `?question=${encodeURIComponent(question)}&model=${encodeURIComponent(model)}`,
       );
       setAnswer(await answerResponse.text());
       setFetchStatus(FETCH_STATES.DONE);
@@ -128,15 +142,23 @@ function app () {
             h('label', { htmlFor: 'document' }, 'Content Text'),
           ]),
           h('div', { className: 'row' }, [
-            h(
-              'button',
-              {
-                className: 'waves-effect waves-light btn blue',
-                disabled: btnDisabled,
-                onClick: answerQuestion,
-              },
-              'Answer'
-            ),
+            h('div', { className: 'input-field col s12 m3' }, [
+              h('select', { id: 'model', onChange: onModelChange },
+                Object.
+                  values(MODELS).
+                  map(m => h('option', { value: m, selected: m === model }, m))
+              ),
+              h('label', { htmlFor: 'model' }, 'ALBERT Model'),
+            ]),
+            h('div', { className: 'input-field col s12 m9' }, [
+              h('button', {
+                  className: 'waves-effect waves-light btn blue',
+                  disabled: btnDisabled,
+                  onClick: answerQuestion,
+                },
+                'Answer'
+              ),
+            ])
           ]),
           fetchStatus === FETCH_STATES.IN_FLIGHT ?
             h('div', { className: 'progress' }, h('div', { className: 'indeterminate blue' })) :
@@ -156,3 +178,9 @@ function app () {
 }
 
 app();
+
+// Initialize the select box
+document.addEventListener('DOMContentLoaded', () => {
+  const elems = document.querySelectorAll('select');
+  const instances = M.FormSelect.init(elems, {});
+});
