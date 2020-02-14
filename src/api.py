@@ -1,7 +1,7 @@
 import albert
 import hashlib
 import base64
-from flask import Flask, escape, request, render_template
+from flask import Flask, escape, jsonify, request, render_template
 
 app = Flask(__name__)
 
@@ -33,13 +33,27 @@ def answer(id):
     question = request.args.get("question")
     if not question:
         return "question parameter required"
-    model = request.args.get("model")
-    if not model:
-        model = 'albert-large-v2'
+    pretrained_model = request.args.get("model")
+    if not pretrained_model:
+        pretrained_model = 'albert-large-v2'
 
     document = documents[_id].decode('utf-8')
 
-    answer = albert.get_answer(model, document, question)
+    model, tokenizer = albert.load_model(pretrained_model)
+    answer = albert.get_answer(model, tokenizer, document, question)
     if not answer:
-        return "ALBERT was unable to answer the question"
-    return answer
+        return jsonify({
+            'answer': "ALBERT was unable to answer the question",
+            'scores': None,
+            'probabilities': None,
+        })
+
+    result = albert.score_tokens(model, tokenizer, document, question)
+    scores = albert.span_scores(*result)
+    probabilities = albert.span_probabilities(*result)
+
+    return jsonify({
+        'answer': answer,
+        'scores': scores,
+        'probabilities': probabilities,
+    })

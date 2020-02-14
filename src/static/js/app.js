@@ -21,10 +21,12 @@ function app () {
     'DONE',
   ].reduce((memo, field) => Object.assign(memo, { [field]: field }));
 
+  const emptyResponse = { answer: '', scores: null, probabilities: null };
+
   function App () {
     const [ document, setDocument ] = useState('');
     const [ question, setQuestion ] = useState('');
-    const [ answer, setAnswer ] = useState('');
+    const [ answer, setAnswer ] = useState(emptyResponse);
     const [ model, setModel ] = useState(MODELS.LARGE_V2);
     const [ fetchStatus, setFetchStatus ] = useState(FETCH_STATES.NOT_STARTED);
 
@@ -34,7 +36,7 @@ function app () {
 
     const answerQuestion = async () => {
       setFetchStatus(FETCH_STATES.IN_FLIGHT);
-      setAnswer('');
+      setAnswer(emptyResponse);
       const documentUpload = await fetch(
         '/documents',
         {
@@ -50,7 +52,7 @@ function app () {
         `/documents/${id}/answer` +
           `?question=${encodeURIComponent(question)}&model=${encodeURIComponent(model)}`,
       );
-      setAnswer(await answerResponse.text());
+      setAnswer(await answerResponse.json());
       setFetchStatus(FETCH_STATES.DONE);
     };
 
@@ -172,10 +174,18 @@ function app () {
           answer ?
             h('div', null, [
               h('p', { style: { fontWeight: 700 } }, 'ALBERT\'s Answer:'),
-              h('p', null, answer)
+              h('p', null, answer.answer)
             ]) :
             null,
           ]),
+        h('div', { className: 'container' }, [
+        h('div', { className: 'row' }, [
+          h('pre', { className: 'col s12' }, JSON.stringify({
+            probabilities: answer.probabilities,
+            scores: answer.scores,
+          }, null, 2)),
+        ]),
+        ])
       ]);
   }
 
